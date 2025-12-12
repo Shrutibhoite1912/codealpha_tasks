@@ -1,0 +1,51 @@
+"""
+collect_midi.py
+
+Utilities to collect MIDI files into a local folder.
+- Scans folders for .mid/.midi and copies them into data/midi
+- Optionally download a small sample MIDI for testing
+"""
+
+import os
+import shutil
+from pathlib import Path
+import requests
+
+DATA_DIR = Path("data/midi")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+def add_from_folder(src_folder, recursive=True):
+    src = Path(src_folder)
+    if not src.exists():
+        raise FileNotFoundError(src)
+    patterns = ["*.mid", "*.midi"]
+    for pattern in patterns:
+        if recursive:
+            for f in src.rglob(pattern):
+                dst = DATA_DIR / f.name
+                try:
+                    shutil.copy(f, dst)
+                except Exception:
+                    pass
+
+def download_example_midi(url, name=None):
+    # Downloads a single MIDI to data/midi for testing
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    if name is None:
+        name = url.split("/")[-1]
+    path = DATA_DIR / name
+    with open(path, "wb") as fh:
+        fh.write(r.content)
+    return path
+
+if __name__ == "__main__":
+    # Example usage:
+    # Put local folder path that contains many midi files or run the sample download below.
+    print("Place MIDI files in data/midi or scan a folder using add_from_folder().")
+    sample = "https://www.midiworld.com/download/2543"  # small test midi (may change)
+    try:
+        p = download_example_midi(sample, name="sample_test.mid")
+        print("Downloaded sample to", p)
+    except Exception as e:
+        print("Download failed:", e)
