@@ -1,0 +1,35 @@
+# FAQ Matcher + Simple Chat UI
+
+This project shows how to:
+- Collect FAQs (faqs.json).
+- Preprocess text using spaCy (tokenization, lemmatization, stopword removal).
+- Match user queries to FAQs using TF-IDF + cosine similarity or semantic embeddings (SentenceTransformers).
+- Provide a simple Streamlit chat UI.
+
+Requirements:
+1. Create a Python virtual environment (recommended).
+2. Install dependencies:
+   pip install -r requirements.txt
+
+3. Install spaCy language model:
+   python -m spacy download en_core_web_sm
+   # optional, for better quality and performance:
+   python -m spacy download en_core_web_trf
+
+4. If you want semantic embeddings, ensure sentence-transformers installed (already in requirements) and the model will be downloaded automatically when first used.
+
+Run the app:
+   streamlit run app.py
+
+How it works:
+- FAQMatcher preprocesses questions with spaCy, builds a TF-IDF matrix (or embeddings),
+  and computes cosine similarity between the input question and stored FAQ questions.
+- The Streamlit UI allows entering a question and returns the best-matching FAQ answer along with a similarity score.
+- Use the "Use semantic embeddings" option to switch to sentence-transformers for better semantic matching across paraphrases.
+
+Extensions / Improvements:
+- Add more FAQs (faqs.json), or store in a DB.
+- Add fallback escalation when similarity < some threshold (e.g., create a ticket).
+- Use an intent classifier (sklearn or a fine-tuned model) for routing to different FAQ subsets.
+- Use Faiss or Milvus for scalable nearest-neighbor search on embeddings if you have many FAQs.
+- Add context handling and multi-turn conversation memory in the UI.
